@@ -1,5 +1,5 @@
 [![Build
-Status](https://travis-ci.org/vitormattos/vitormattos/blueprint-parser?branch=master)](https://travis-ci.org/vitormattos/blueprint-parser)
+Status](https://travis-ci.org/vitormattos/blueprint-parser.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-parser)
 [![Coverage
 Status](https://coveralls.io/repos/vitormattos/blueprint-parser/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-parser?branch=master)
 [![Latest Stable
