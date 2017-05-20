@@ -1,0 +1,48 @@
+{
+	"name": "vitormattos/blueprint-parser",
+	"description": "Parser for API blueprint files",
+	"license": "MIT",
+	"type": "library",
+	"homepage": "https://github.com/vitormattos/blueprint-parser",
+	"authors": [
+		{
+			"name": "Vitor Mattos",
+			"homepage": "https://github.com/vitormattos"
+		}
+	],
+	"support": {
+		"source": "https://github.com/vitormattos/blueprint-parser/tree/master",
+		"issues": "https://github.com/vitormattos/blueprint-parser/issues"
+	},
+	"keywords": [
+		"api",
+		"blueprint",
+		"parser",
+		"apib"
+	],
+	"autoload": {
+		"psr-4": {
+			"VitorMattos\\BlueprintParser\\" : "src"
+		}
+	},
+	"require": {
+		"php": ">=5.6"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.1",
+		"squizlabs/php_codesniffer": "^3.0",
+		"overtrue/phplint": "^0.2.1",
+		"satooshi/php-coveralls": "^1.0"
+	},
+	"scripts": {
+		"phpcs": "phpcs --standard=PSR2 -n src",
+		"phpcbf": "phpcbf --standard=PSR2 -n src",
+		"phplint": "phplint src",
+		"unit": "phpunit --coverage-clover ./tests/log/clover.xml",
+		"test": [
+			"@unit",
+			"@phpcs",
+			"@phplint"
+		]
+	}
+}
