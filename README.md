@@ -1,10 +1,11 @@
 [![Build
-Status](https://travis-ci.org/vitormattos/blueprint-parser.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-parser)
+Status](https://travis-ci.org/vitormattos/blueprint-sdk-maker.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-sdk-maker)
 [![Coverage
-Status](https://coveralls.io/repos/vitormattos/blueprint-parser/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-parser?branch=master)
+Status](https://coveralls.io/repos/vitormattos/blueprint-sdk-maker/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-sdk-maker?branch=master)
 [![Latest Stable
-Version](https://poser.pugx.org/vitormattos/blueprint-parser/v/stable)](https://packagist.org/packages/vitormattos/blueprint-parser)
-[![License](https://poser.pugx.org/vitormattos/blueprint-parser/license)](https://packagist.org/packages/vitormattos/blueprint-parser)
+Version](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/v/stable)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
+[![License](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/license)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 # Parser for API blueprint files
 
@@ -16,7 +17,7 @@ oriented object interface.
 ## Install by composer
 
 ```bash
-composer require vitormattos/blueprint-parser
+composer require vitormattos/blueprint-sdk-maker
 ```
 
 ## Contributing
