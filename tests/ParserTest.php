@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use VitorMattos\BlueprintParser\Parser;
+use VitorMattos\BlueprintSdkMaker\Parser;
 
 final class ParserTest extends TestCase
 {

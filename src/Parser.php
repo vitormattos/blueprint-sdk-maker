@@ -1,5 +1,5 @@
 <?php
-namespace VitorMattos\BlueprintParser;
+namespace VitorMattos\BlueprintSdkMaker;
 
 class Parser
 {
