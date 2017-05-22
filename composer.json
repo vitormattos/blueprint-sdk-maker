@@ -21,11 +21,12 @@
 	],
 	"autoload" : {
 		"psr-4" : {
-			"VitorMattos\\BlueprintSdkMaker\\" : "src"
+			"BlueprintSdkMaker\\" : "src/Sdk"
 		}
 	},
 	"require" : {
-		"php" : ">=7"
+		"php" : ">=7",
+		"symfony/console" : "^3.2"
 	},
 	"require-dev" : {
 		"brianseitel/oasis-mson-parser" : "dev-master",
