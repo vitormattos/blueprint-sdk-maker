@@ -26,10 +26,10 @@
 	},
 	"require" : {
 		"php" : ">=7",
-		"symfony/console" : "^3.2"
+		"symfony/console" : "^3.2",
+		"brianseitel/oasis-mson-parser": "dev-newest"
 	},
 	"require-dev" : {
-		"brianseitel/oasis-mson-parser" : "dev-master",
 		"nikic/php-parser" : "^3.0",
 		"phpunit/phpunit" : "^6.1",
 		"squizlabs/php_codesniffer" : "^3.0",
@@ -48,5 +48,10 @@
 			"@phpcs",
 			"@phplint"
 		]
-	}
+	},
+	"repositories" : [{
+			"type" : "vcs",
+			"url" : "https://github.com/vitormattos/oasis-mson-parser"
+		}
+	]
 }
