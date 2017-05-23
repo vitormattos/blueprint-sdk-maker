@@ -4,6 +4,8 @@ php:
     - 7.1
     - nightly
 install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y g++-4.8
     - wget https://github.com/apiaryio/drafter/releases/download/v3.2.6/drafter-v3.2.6.tar.gz
     - tar -xzvf drafter-v3.2.6.tar.gz
     - pushd drafter-v3.2.6 && ./configure && make && sudo make install && popd
