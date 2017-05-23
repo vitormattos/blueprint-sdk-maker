@@ -25,3 +25,4 @@ composer.lock
 tests/log
 
 .phplint-cache
+build

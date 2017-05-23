@@ -27,7 +27,8 @@
 	"require" : {
 		"php" : ">=7",
 		"symfony/console" : "^3.2",
-		"brianseitel/oasis-mson-parser": "dev-newest"
+		"brianseitel/oasis-mson-parser": "dev-newest",
+		"mikey179/vfsStream": "^1.6"
 	},
 	"require-dev" : {
 		"nikic/php-parser" : "^3.0",
