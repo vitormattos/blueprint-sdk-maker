@@ -60,7 +60,7 @@ class Application extends BaseApplication
     protected function getDefaultInputDefinition()
     {
         $definition = parent::getDefaultInputDefinition();
-        $definition->addOption(new InputOption('--drafter-bin', null, InputOption::VALUE_NONE, 'Binary of Drafter'));
+        $definition->addOption(new InputOption('drafter-bin', null, InputOption::VALUE_NONE, 'Binary of Drafter'));
         
         return $definition;
     }
