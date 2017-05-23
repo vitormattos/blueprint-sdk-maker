@@ -36,14 +36,10 @@ final class ParserTest extends TestCase
     {
         $command = new MakeCommand();
         $commandTester = new CommandTester($command);
-        if (!is_file('drafter')) {
-            shell_exec('wget https://www.dropbox.com/s/6wv0pz2c4au2zwh/drafter');
-        }
         $commandTester->execute([
             'apib-file' => $testDirectory->getRealPath().DIRECTORY_SEPARATOR.'ApiBlueprint.apib',
             '--directory' => vfsStream::url('root'),
-            '--namespace' => 'BlueprintApi',
-            '--drafter-bin' => 'drafter'
+            '--namespace' => 'BlueprintApi'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertEquals("Generate vfs://root/src/Request.php\n", $output);

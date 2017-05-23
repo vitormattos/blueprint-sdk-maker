@@ -3,9 +3,13 @@ php:
     - 7.0
     - 7.1
     - nightly
+install:
+    - wget https://github.com/apiaryio/drafter/releases/download/v3.2.6/drafter-v3.2.6.tar.gz
+    - tar -xzvf drafter-v3.2.6.tar.gz
+    - pushd drafter-v3.2.6 && ./configure && make && sudo make install && popd
 before_script:
     - composer self-update
-    - composer install
+    - composer install --dev
 script:
     - composer test
 after_success:
