@@ -5,7 +5,8 @@ use org\bovigo\vfs\vfsStream;
 use Symfony\Component\Finder\Finder;
 use BlueprintSdkMaker\Command\MakeCommand;
 use Symfony\Component\Console\Tester\CommandTester;
-use BlueprintSdkMaker\Command\AboutCommand;
+use BlueprintSdkMaker\Console\Application;
+use Symfony\Component\Console\Tester\ApplicationTester;
 
 final class ParserTest extends TestCase
 {
@@ -27,7 +28,8 @@ final class ParserTest extends TestCase
     
     public function testAboutCommand()
     {
-        $command = new AboutCommand();
+        $application = new Application();
+        $command = $application->get('about');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
         $expected = "Blueprint SDK Maker - Create SDK client from API blueprint apib file
@@ -35,6 +37,15 @@ API Blueprint is a powerful high-level API description language for web APIs.
 With this command you will parse doc from API Blueprint and generate a PHP SKD.
 See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n";
         $this->assertEquals($expected, $commandTester->getDisplay());
+    }
+    
+    public function testHelpCommand()
+    {
+        $application = new Application();
+        $application->setAutoExit(false);
+        $ApplicationTester = new ApplicationTester($application);
+        $ApplicationTester->run([]);
+        $this->assertRegExp('/Blueprint API Maker/', $ApplicationTester->getDisplay());
     }
     
     public function testMakeCommandInvalidApibFile()
