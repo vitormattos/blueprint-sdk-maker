@@ -1,6 +1,5 @@
 <?php
-$includeIfExists = function ($file)
-{
+$includeIfExists = function ($file) {
     return file_exists($file) ? include $file : false;
 };
 

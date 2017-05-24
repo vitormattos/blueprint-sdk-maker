@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+$cwd = getcwd();
+chdir(__DIR__.'/../');
+$ts = rtrim(shell_exec('git log -n1 --pretty=%ct HEAD'));
+
+shell_exec('composer install -q --no-dev');
+shell_exec('curl -LSs https://box-project.github.io/box2/installer.php | php');
+shell_exec('php -d phar.readonly=0 box.phar build -vvv');
+shell_exec('composer install -q');
+chdir($cwd);

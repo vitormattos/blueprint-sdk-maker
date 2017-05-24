@@ -2,7 +2,8 @@
     "output": "blueprint-sdk-maker.phar",
     "chmod": "0755",
     "files": [
-        "LICENSE"
+        "LICENSE",
+        "vendor/autoload.php"
     ],
     "finder": [
         {
@@ -10,14 +11,12 @@
             "exclude": ["tests"],
             "in": [
                 "src",
-                "bin",
-                "bin",
-                "brianseitel/oasis-mson-parser",
-                "composer",
-                "psr/log",
-                "symfony/console",
-                "symfony/debug",
-                "symfony/polyfill-mbstring"
+                "vendor/brianseitel/oasis-mson-parser",
+                "vendor/composer",
+                "vendor/psr/log",
+                "vendor/symfony/console",
+                "vendor/symfony/debug",
+                "vendor/symfony/polyfill-mbstring"
             ]
         }
     ],
