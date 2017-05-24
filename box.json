@@ -1,0 +1,27 @@
+{
+    "output": "blueprint-sdk-maker.phar",
+    "chmod": "0755",
+    "files": [
+        "LICENSE"
+    ],
+    "finder": [
+        {
+            "name": ["*.php"],
+            "exclude": ["tests"],
+            "in": [
+                "src",
+                "bin",
+                "bin",
+                "brianseitel/oasis-mson-parser",
+                "composer",
+                "psr/log",
+                "symfony/console",
+                "symfony/debug",
+                "symfony/polyfill-mbstring"
+            ]
+        }
+    ],
+    "main": "bin/blueprint-sdk-maker",
+    "stub": true,
+    "web": false
+}

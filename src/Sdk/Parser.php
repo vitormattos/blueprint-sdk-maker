@@ -115,10 +115,6 @@ class Parser
     {
         if (!$node) {
             $node = $this->apib;
-            $name = $this->rootClassName;
-        } else {
-            $name = ucwords($node['meta']['title']);
-            $name = str_replace(' ', '', $current_class);
         }
         $this->generateRequestClass($node);
         $this->generateMainClass();

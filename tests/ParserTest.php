@@ -4,12 +4,8 @@ use BlueprintSdkMaker\Parser;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Component\Finder\Finder;
 use BlueprintSdkMaker\Command\MakeCommand;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Tester\CommandTester;
+use BlueprintSdkMaker\Command\AboutCommand;
 
 final class ParserTest extends TestCase
 {
@@ -29,10 +25,35 @@ final class ParserTest extends TestCase
         $this->assertEquals($parser->getApib(), 'bla.apib');
     }
     
+    public function testAboutCommand()
+    {
+        $command = new AboutCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([]);
+        $expected = "Blueprint SDK Maker - Create SDK client from API blueprint apib file
+API Blueprint is a powerful high-level API description language for web APIs.
+With this command you will parse doc from API Blueprint and generate a PHP SKD.
+See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n";
+        $this->assertEquals($expected, $commandTester->getDisplay());
+    }
+    
+    public function testMakeCommandInvalidApibFile()
+    {
+        $command = new MakeCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'apib-file' => 'invalid.apib',
+            '--directory' => vfsStream::url('root'),
+            '--namespace' => 'BlueprintApi'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertEquals("invalid apib file.\n", $output);
+    }
+    
     /**
      * @dataProvider resourceProvider
      */
-    public function testRessources(SplFileInfo $testDirectory)
+    public function testMakeCommand(SplFileInfo $testDirectory)
     {
         $command = new MakeCommand();
         $commandTester = new CommandTester($command);
