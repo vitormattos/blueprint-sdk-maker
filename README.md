@@ -23,10 +23,38 @@ Download the latest phar from the latest [release](https://github.com/vitormatto
 You may place it anywhere that will make it easier for you to access (such as /usr/local/bin) and chmod it to 755. You can even rename it to just box to avoid having to type the .phar extension every time.
 
 ## Parsing the .apib file
-Run the follow command replacing `<filename.apib>` by your `.apip` file. The default output of this command is a directory called `build` containing the source of your SDK and a phar to use your SDK standalone.
+Run the follow command replacing `<filename.apib>` by your `.apip` file. The default output of this command is a directory called `build` containing the source of your SDK and a phar (`api.phar`) to use your SDK standalone.
 
 ```
 blueprint-sdk-maker make <filename.apib>
+```
+
+## Example of using generated SDK
+
+### From phar file
+Create file called `test.php` into same directory of `api.phar` and run `test.php`
+```php
+<?php
+use BlueprintApi\Api;
+
+require 'api.phar';
+$api = new Api();
+$return = $api->Entity->getYourEndpoint('BLA');
+var_dump($return);
+```
+### From composer file
+Add the content of the follow `composer.json` file into `composer.json` file of your project replacing `<YourGithubAccout>` and `<TheProjectName>` for your data and run `composer install`.
+```json
+{
+    "require" : {
+        "<YourGithubAccout>/<TheProjectName>" : "dev-master"
+    },
+    "repositories" : [{
+            "type" : "vcs",
+            "url" : "https://github.com/<YourGithubAccout>/<TheProjectName>"
+        }
+    ]
+}
 ```
 
 ## Contributing
