@@ -8,9 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Oasis\Parser;
-use Composer\Command\InstallCommand;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\StreamOutput;
 
 class MakeCommand extends Command
 {
@@ -88,6 +85,9 @@ EOT;
             $paths[] = $options['directory'].DIRECTORY_SEPARATOR.'composer.json',
             $composerJson
             );
+        copy('LICENSE', $options['directory'].DIRECTORY_SEPARATOR.'LICENSE');
+        copy('res/README.md', $options['directory'].DIRECTORY_SEPARATOR.'README.md');
+        copy('res/composer.lock', $options['directory'].DIRECTORY_SEPARATOR.'composer.lock');
 
         if (!$options['no-phar']) {
             exec('composer install -d '.$options['directory'].' --prefer-dist --no-dev -vvv');

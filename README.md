@@ -16,6 +16,18 @@ oriented object interface.
 
 ## How do I get started?
 
+
+**NOTE:** *Blueprint SDK Maker depends on the [Drafter](https://github.com/apiaryio/drafter) library. Please see that repo for build instructions.*
+
+To generate standalone phar file, set the following in your php.ini:
+
+```
+; http://php.net/phar.readonly
+phar.readonly = Off
+```
+
+If you don't need generate `phar`, run Blueprint SDK Maker using the option `--no-phar`.
+
 ### As a Phar (Recommended)
 
 Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker/releases/latest).

@@ -19,7 +19,7 @@ phpunit.xml
 *.phar
 
 # Don't commit composer lock file
-composer.lock
+/composer.lock
 
 # this is the code coverage generated when running phpunit.
 tests/log
