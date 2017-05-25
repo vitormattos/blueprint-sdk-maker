@@ -66,6 +66,7 @@ EOT
             $options['directory'].'/src/'
         );
 
+        $SdkMaker->setNamespace($options['namespace']);
         $SdkMaker->generate();
 
         $paths = $SdkMaker->printFiles();

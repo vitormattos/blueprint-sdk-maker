@@ -165,23 +165,25 @@ class Parser
                         $methodDescription[] = '';
                     }
                     $hasOptional = false;
-                    foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
-                        $docParam = '@param';
-                        $endpointParam = $factory->param($arg['content']['key']['content']);
-                        if (isset($arg['meta']['title'])) {
-                            $endpointParam->setTypeHint($arg['meta']['title']);
-                            $docParam.= ' '.$arg['meta']['title'];
+                    if (isset($endpoint['content'][0]['attributes']['hrefVariables']['content'])) {
+                        foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
+                            $docParam = '@param';
+                            $endpointParam = $factory->param($arg['content']['key']['content']);
+                            if (isset($arg['meta']['title'])) {
+                                $endpointParam->setTypeHint($arg['meta']['title']);
+                                $docParam.= ' '.$arg['meta']['title'];
+                            }
+                            if ($arg['attributes']['typeAttributes'][0] != 'required') {
+                                $hasOptional = true;
+                                $docParam.= ' (optional)';
+                                $endpointParam->setDefault(null);
+                            }
+                            if (isset($arg['meta']['description'])) {
+                                $docParam.=$arg['meta']['description'];
+                            }
+                            $method->addParam($endpointParam);
+                            $methodDescription[] = $docParam;
                         }
-                        if ($arg['attributes']['typeAttributes'][0] != 'required') {
-                            $hasOptional = true;
-                            $docParam.= ' (optional)';
-                            $endpointParam->setDefault(null);
-                        }
-                        if (isset($arg['meta']['description'])) {
-                            $docParam.=$arg['meta']['description'];
-                        }
-                        $method->addParam($endpointParam);
-                        $methodDescription[] = $docParam;
                     }
                     if ($hasOptional) {
                         $url = parse_url($endpoint['attributes']['href']);
@@ -293,19 +295,21 @@ class Request
         
         $factory = $this->getBuilderFactory();
         $properties = [];
-        foreach ($node['attributes']['meta'] as $property) {
-            $name = strtolower($property['content']['key']['content']);
-            $properties[] = $name;
-            $class->addStmt($factory
-                ->property($name)
-                ->makeProtected()
-                ->setDefault($property['content']['value']['element'])
-                ->setDocComment(
-                    "/**
-                      * {$property['content']['key']['content']}
-                      * @var {$property['content']['value']['content']}
-                      */"
-                    ));
+        if (isset($node['attributes']['meta'])) {
+            foreach ($node['attributes']['meta'] as $property) {
+                $name = strtolower($property['content']['key']['content']);
+                $properties[] = $name;
+                $class->addStmt($factory
+                    ->property($name)
+                    ->makeProtected()
+                    ->setDefault($property['content']['value']['element'])
+                    ->setDocComment(
+                        "/**
+                          * {$property['content']['key']['content']}
+                          * @var {$property['content']['value']['content']}
+                          */"
+                        ));
+            }
         }
         if (!in_array('host', $properties)) {
             $class->addStmt($factory

@@ -74,7 +74,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
             '--namespace' => 'BlueprintApi'
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertEquals("Generate vfs://root/src/Request.php\nGenerate vfs://root/src/Api.php\n", $output);
+        $this->assertRegExp('/Generate vfs:\/\/.*.php/', $output);
 
         $expectedFinder = new Finder();
         $expectedFinder->in($testDirectory->getRealPath() . DIRECTORY_SEPARATOR . 'expected'.DIRECTORY_SEPARATOR.'src/');

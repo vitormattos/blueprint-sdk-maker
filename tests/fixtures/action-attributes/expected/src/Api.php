@@ -4,8 +4,14 @@ namespace BlueprintApi;
 
 class Api
 {
+    /**
+     * Users
+     * @var Users
+     */
+    public $Users;
     public function __construct()
     {
+        $this->Users = new Users();
     }
     /**
      * Define the base URL to API

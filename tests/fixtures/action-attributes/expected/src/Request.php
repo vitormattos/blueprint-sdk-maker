@@ -5,15 +5,10 @@ namespace BlueprintApi;
 class Request
 {
     /**
-     * FORMAT
-     * @var 1A
+     * Base url to API
+     * @var string
      */
-    protected $format = 'string';
-    /**
-     * HOST
-     * @var https://api.example.com
-     */
-    protected $host = 'string';
+    protected $host;
     public function __construct($host = null)
     {
         if ($host) {
