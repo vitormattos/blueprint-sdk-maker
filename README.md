@@ -14,10 +14,18 @@ description language for web APIs and generate `.apib` media files. With this
 project you will parse `.apib` files and get all propertyes of file with
 oriented object interface.
 
-## Install by composer
+## How do I get started?
+###As a Phar (Recommended)
 
-```bash
-composer require vitormattos/blueprint-sdk-maker
+Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker).
+
+You may place it anywhere that will make it easier for you to access (such as /usr/local/bin) and chmod it to 755. You can even rename it to just box to avoid having to type the .phar extension every time.
+
+## Parsing the .apib file
+Run the follow command replacing `<filename.apib>` by your `.apip` file. The default output of this command is a directory called `build` containing the source of your SDK and a phar to use your SDK standalone.
+
+```
+blueprint-sdk-maker make <filename.apib>
 ```
 
 ## Contributing
