@@ -4,6 +4,7 @@ namespace BlueprintSdkMaker;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\ParserFactory;
 
 class Parser
 {
@@ -27,6 +28,12 @@ class Parser
      * @var \PhpParser\BuilderFactory
      */
     private $BuilderFactory;
+    /**
+     * @see \PhpParser\ParserFactory
+     *
+     * @var \PhpParser\Parser
+     */
+    private $Parser;
     /**
      *
      * @var \PhpParser\Builder\Class_[]
@@ -90,6 +97,14 @@ class Parser
         }
         return $this->BuilderFactory;
     }
+    
+    private function getParser()
+    {
+        if (null === $this->Parser) {
+            $this->Parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        }
+        return $this->Parser;
+    }
 
     /**
      * @param string $name
@@ -117,143 +132,191 @@ class Parser
             $node = $this->apib;
         }
         $this->generateRequestClass($node);
-        $this->generateMainClass();
+        $this->generateMainClass($node);
+        $this->generateEntity($node);
     }
     
-    public function generateMainClass()
+    private function generateEntity($node)
     {
+        $Parser = $this->getParser();
+        $factory = $this->getBuilderFactory();
+        foreach ($node['content'] as $entity) {
+            if ($entity['element'] == 'category') {
+                $className = ucwords($entity['meta']['title']);
+                $className = str_replace(' ', '', $className);
+                $class = $this->setClass($className);
+                $class->extend('Request');
+                foreach ($entity['content'] as $endpoint) {
+                    $endpointName = ucwords($endpoint['meta']['title']);
+                    $endpointName = lcfirst($endpointName);
+                    $endpointName = str_replace(' ', '', $endpointName);
+                    $method = $factory->method($endpointName);
+                    $method->addStmt(
+                        new Node\Expr\Assign(
+                            new Node\Expr\Variable('method'),
+                            new Node\Scalar\String_(
+                                strtolower($endpoint['content'][0]['content'][0]['content'][0]['attributes']['method'])
+                                )
+                            )
+                        );
+                    $methodDescription = [];
+                    if (isset($endpoint['content'][0]['meta']['title'])) {
+                        $methodDescription[] = $endpoint['content'][0]['meta']['title'];
+                        $methodDescription[] = '';
+                    }
+                    $hasOptional = false;
+                    foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
+                        $docParam = '@param';
+                        $endpointParam = $factory->param($arg['content']['key']['content']);
+                        if (isset($arg['meta']['title'])) {
+                            $endpointParam->setTypeHint($arg['meta']['title']);
+                            $docParam.= ' '.$arg['meta']['title'];
+                        }
+                        if ($arg['attributes']['typeAttributes'][0] != 'required') {
+                            $hasOptional = true;
+                            $docParam.= ' (optional)';
+                            $endpointParam->setDefault(null);
+                        }
+                        if (isset($arg['meta']['description'])) {
+                            $docParam.=$arg['meta']['description'];
+                        }
+                        $method->addParam($endpointParam);
+                        $methodDescription[] = $docParam;
+                    }
+                    if ($hasOptional) {
+                        $url = parse_url($endpoint['attributes']['href']);
+                        $url['path'] = str_replace('{', '{$', $url['path']);
+                        $code = [];
+                        $code[]= '$path = "'.$url['path'].'";';
+                        foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
+                            if ($arg['attributes']['typeAttributes'][0] != 'required') {
+                                $name = $arg['content']['key']['content'];
+                                $code[]="if(!is_null(\$$name)) \$params['$name'] = \$$name;";
+                            }
+                        }
+                        $code[]= '$path.= \'?\'.http_build_query($params);';
+                        $method->addStmts($Parser->parse('<?php '.implode("\n", $code)));
+                    } else {
+                        $url = str_replace('{', '{$', $endpoint['attributes']['href']);
+                        $method->addStmts($Parser->parse("<?php \$path = \"$url\";"));
+                    }
+                    $method->addStmts($Parser->parse('<?php return self::request($method, $path);'));
+                    $methodDescription[] = '@return Array|Exception array';
+                    $method->setDocComment(
+                        "/**\n".
+                        "     * ".
+                        implode("\n     * ", $methodDescription).
+                        "\n     */"
+                        );
+                    $method->setReturnType('array');
+                    $class
+                        ->addStmt($method);
+                }
+            }
+        }
     }
-
-    public function generateRequestClass(array $node)
+    
+    private function generateMainClass(array $node)
     {
         $factory = $this->getBuilderFactory();
-        $class = $this->setClass('Request')
-            ->addStmt($factory->method('request')
-                ->setDocComment(
-                    "/**
-                      * Send an request
-                      *
-                      * @param string \$method The method of HTTP request
-                      * @param string \$url The path of endpoint to request
-                      * @return array|Exception
-                      */")
-                ->makeProtected()
-                ->addParam($factory
-                    ->param('method')
-                    ->setTypeHint('string'))
-                ->addParam($factory
-                    ->param('url')
-                    ->setTypeHint('string'))
-                ->setReturnType('array')
-                ->addStmt(
-                    //new Print_(new Variable('someParam'))
+        $class = $this->setClass('Api');
+        $constructor = $factory->method('__construct')
+            ->makePublic();
+        foreach ($node['content'] as $endpoint) {
+            if ($endpoint['element'] == 'category') {
+                $propertyName = ucwords($endpoint['meta']['title']);
+                $propertyName = str_replace(' ', '', $propertyName);
+                $constructor->addStmt(
                     new Node\Expr\Assign(
-                        new Node\Expr\Variable('client'),
-                        new Node\Expr\New_(
-                            new Node\Name\FullyQualified(['GuzzleHttp', 'Client']),
-                            [
-                                new Node\Expr\Array_(
-                                    [
-                                        new Node\Expr\ArrayItem(
-                                            new Node\Expr\PropertyFetch(
-                                                new Node\Expr\Variable('this'),
-                                                'hots'
-                                                ),
-                                            new Node\Scalar\String_('base_uri')
-                                            )
-                                    ],
-                                    ['kind' => Node\Expr\Array_::KIND_SHORT]
-                                    )
-                            ]
-                            )
-                        )
-                    )
-                ->addStmt(
-                    new Node\Stmt\TryCatch(
-                        [
-                            new Node\Expr\Assign(
-                                new Node\Expr\Variable('res'),
-                                new Node\Expr\MethodCall(
-                                    new Node\Expr\Variable('client'),
-                                    'request',
-                                    [
-                                        new Node\Arg(
-                                            new Node\Expr\Variable('method')
-                                            ),
-                                        new Node\Arg(
-                                            new Node\Expr\Variable('url')
-                                            )
-                                    ]
-                                    )
-                                )
-                        ],
-                        [
-                            new Node\Stmt\Catch_(
-                                [new Node\Name('Exception')],
-                                'e',
-                                [
-                                    new Node\Expr\Assign(
-                                        new Node\Expr\Variable('res'),
-                                        new Node\Expr\FuncCall(
-                                            new Node\Name('json_decode'),
-                                            [
-                                                new Node\Arg(
-                                                    new Node\Expr\MethodCall(
-                                                        new Node\Expr\MethodCall(
-                                                            new Node\Expr\MethodCall(
-                                                                new Node\Expr\Variable('e'),
-                                                                'getResponse'
-                                                                ),
-                                                            'getBody'
-                                                            ),
-                                                        'getContents'
-                                                        )
-                                                    )
-                                            ]
-                                            )
-                                        )
-                                ]
-                                )
-                        ]
-                        )
-                    )
-                ->addStmt(
-                    new Node\Stmt\Return_(
-                        new Node\Expr\FuncCall(
-                            new Node\Name('json_decode'),
-                            [
-                                new Node\Arg(
-                                    new Node\Expr\MethodCall(
-                                        new Node\Expr\MethodCall(
-                                            new Node\Expr\Variable('res'),
-                                            'getBody'
-                                            ),
-                                        'getContents'
-                                        )
-                                    ),
-                                new Node\Arg(
-                                    new Node\Expr\ConstFetch(
-                                        new Node\Name('true')
-                                        )
-                                    )
-                            ]
-                            )
-                        )
+                        new Node\Expr\PropertyFetch(
+                            new Node\Expr\Variable('this'),
+                            $propertyName
+                        ),
+                        new Node\Expr\New_(new Node\Name([$propertyName]))
                     )
                 );
+                $class
+                    ->addStmt($factory
+                        ->property($propertyName)
+                        ->setDocComment(
+                            "/**
+                             * $propertyName
+                             * @var $propertyName
+                             */"));
+            }
+        }
+        $class->addStmt($constructor);
+        $Parser = $this->getParser();
+        $class->addStmt($factory->method('setHost')
+            ->addParam($factory->param('host')
+                ->setDefault(null))
+            ->setDocComment(
+                "/**
+                * Define the base URL to API
+                * @param string \$host
+                **/")
+            ->addStmts($Parser->parse('<?php $this->host = $host;')));
+    }
+
+    private function generateRequestClass(array $node)
+    {
+        $Parser = $this->getParser();
+        $tmp = $Parser->parse("<?php
+class Request
+{
+    public function __construct(\$host = null) {
+        if (\$host) {
+            \$this->host = \$host;
+        }
+    }
+    /**
+     * Send an request
+     *
+     * @param string \$method The method of HTTP request
+     * @param string \$url The path of endpoint to request
+     * @return array|Exception
+     */
+    protected function request(string \$method, string \$url) : array
+    {
+        \$client = new \GuzzleHttp\Client(['base_uri' => \$this->hots]);
+        try {
+            \$res = \$client->request(\$method, \$url);
+        } catch (Exception \$e) {
+            \$res = json_decode(\$e->getResponse()->getBody()->getContents());
+        }
+        return json_decode(\$res->getBody()->getContents(), true);
+    }
+}
+")[0];
+        $class = $this->setClass($tmp->name);
+        $class->addStmts($tmp->stmts);
+        
+        $factory = $this->getBuilderFactory();
+        $properties = [];
         foreach ($node['attributes']['meta'] as $property) {
-            $class
-                ->addStmt($factory
-                    ->property(strtolower($property['content']['key']['content']))
-                    ->makeProtected()
-                    ->setDefault($property['content']['value']['element'])
-                    ->setDocComment(
-                        "/**
-                          * {$property['content']['key']['content']}
-                          * @var {$property['content']['value']['content']}
-                          */"
-                        )
-                    );
+            $name = strtolower($property['content']['key']['content']);
+            $properties[] = $name;
+            $class->addStmt($factory
+                ->property($name)
+                ->makeProtected()
+                ->setDefault($property['content']['value']['element'])
+                ->setDocComment(
+                    "/**
+                      * {$property['content']['key']['content']}
+                      * @var {$property['content']['value']['content']}
+                      */"
+                    ));
+        }
+        if (!in_array('host', $properties)) {
+            $class->addStmt($factory
+                ->property('host')
+                ->makeProtected()
+                ->setDocComment(
+                    "/**
+                      * Base url to API
+                      * @var string
+                      */"
+                ));
         }
     }
 

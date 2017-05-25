@@ -14,6 +14,12 @@ class Request
      * @var https://api.example.com
      */
     protected $host = 'string';
+    public function __construct($host = null)
+    {
+        if ($host) {
+            $this->host = $host;
+        }
+    }
     /**
      * Send an request
      *
