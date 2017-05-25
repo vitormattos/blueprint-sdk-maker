@@ -15,7 +15,8 @@ project you will parse `.apib` files and get all propertyes of file with
 oriented object interface.
 
 ## How do I get started?
-###As a Phar (Recommended)
+
+### As a Phar (Recommended)
 
 Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker).
 
