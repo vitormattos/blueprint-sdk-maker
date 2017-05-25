@@ -72,7 +72,7 @@ Add the content of the follow `composer.json` file into `composer.json` file of 
 ## Contributing
 
 If you are interested in fixing issues and contributing directly to the code
-base, please see the document How to Contribute, 
+base, please see the document [How to Contribute](CONTRIBUTING.md), 
 
 ## License
 
