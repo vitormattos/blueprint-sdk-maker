@@ -4,11 +4,6 @@ namespace BlueprintApi;
 
 class Request
 {
-    /**
-     * Base url to API
-     * @var string
-     */
-    protected $host;
     public function __construct($host = null)
     {
         if ($host) {
@@ -24,7 +19,7 @@ class Request
      */
     protected function request(string $method, string $url) : array
     {
-        $client = new \GuzzleHttp\Client(['base_uri' => $this->hots]);
+        $client = new \GuzzleHttp\Client(['base_uri' => $this->host]);
         try {
             $res = $client->request($method, $url);
         } catch (Exception $e) {

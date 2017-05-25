@@ -231,6 +231,7 @@ class Parser
     private function generateMainClass(array $node)
     {
         $factory = $this->getBuilderFactory();
+        $Parser = $this->getParser();
         $class = $this->setClass('Api');
         $constructor = $factory->method('__construct')
             ->makePublic();
@@ -238,15 +239,9 @@ class Parser
             if ($endpoint['element'] == 'category') {
                 $propertyName = ucwords($endpoint['meta']['title']);
                 $propertyName = str_replace(' ', '', $propertyName);
-                $constructor->addStmt(
-                    new Node\Expr\Assign(
-                        new Node\Expr\PropertyFetch(
-                            new Node\Expr\Variable('this'),
-                            $propertyName
-                        ),
-                        new Node\Expr\New_(new Node\Name([$propertyName]))
-                    )
-                );
+                $constructor->addStmts($Parser->parse(
+                    '<?php $this->'.$propertyName.' = new '.$propertyName.'($this->host);'
+                ));
                 $class
                     ->addStmt($factory
                         ->property($propertyName)
@@ -268,6 +263,35 @@ class Parser
                 * @param string \$host
                 **/")
             ->addStmts($Parser->parse('<?php $this->host = $host;')));
+
+        $properties = [];
+        if (isset($node['attributes']['meta'])) {
+            foreach ($node['attributes']['meta'] as $property) {
+                $name = strtolower($property['content']['key']['content']);
+                $properties[] = $name;
+                $class->addStmt($factory
+                    ->property($name)
+                    ->makeProtected()
+                    ->setDefault($property['content']['value']['content'])
+                    ->setDocComment(
+                        "/**
+                        * {$property['content']['key']['content']}
+                        * @var {$property['content']['value']['content']}
+                        */"
+                    ));
+            }
+        }
+        if (!in_array('host', $properties)) {
+            $class->addStmt($factory
+                ->property('host')
+                ->makeProtected()
+                ->setDocComment(
+                    "/**
+                      * Base url to API
+                      * @var string
+                      */"
+                    ));
+        }
     }
 
     private function generateRequestClass(array $node)
@@ -290,7 +314,7 @@ class Request
      */
     protected function request(string \$method, string \$url) : array
     {
-        \$client = new \GuzzleHttp\Client(['base_uri' => \$this->hots]);
+        \$client = new \GuzzleHttp\Client(['base_uri' => \$this->host]);
         try {
             \$res = \$client->request(\$method, \$url);
         } catch (Exception \$e) {
@@ -302,36 +326,6 @@ class Request
 ")[0];
         $class = $this->setClass($tmp->name);
         $class->addStmts($tmp->stmts);
-        
-        $factory = $this->getBuilderFactory();
-        $properties = [];
-        if (isset($node['attributes']['meta'])) {
-            foreach ($node['attributes']['meta'] as $property) {
-                $name = strtolower($property['content']['key']['content']);
-                $properties[] = $name;
-                $class->addStmt($factory
-                    ->property($name)
-                    ->makeProtected()
-                    ->setDefault($property['content']['value']['element'])
-                    ->setDocComment(
-                        "/**
-                          * {$property['content']['key']['content']}
-                          * @var {$property['content']['value']['content']}
-                          */"
-                        ));
-            }
-        }
-        if (!in_array('host', $properties)) {
-            $class->addStmt($factory
-                ->property('host')
-                ->makeProtected()
-                ->setDocComment(
-                    "/**
-                      * Base url to API
-                      * @var string
-                      */"
-                ));
-        }
     }
 
     public function printFiles()

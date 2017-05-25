@@ -9,9 +9,14 @@ class Api
      * @var Users
      */
     public $Users;
+    /**
+     * Base url to API
+     * @var string
+     */
+    protected $host;
     public function __construct()
     {
-        $this->Users = new Users();
+        $this->Users = new Users($this->host);
     }
     /**
      * Define the base URL to API

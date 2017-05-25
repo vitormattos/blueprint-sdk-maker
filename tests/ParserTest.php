@@ -1,7 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use BlueprintSdkMaker\Parser;
-use org\bovigo\vfs\vfsStream;
 use Symfony\Component\Finder\Finder;
 use BlueprintSdkMaker\Command\MakeCommand;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -10,19 +9,16 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 
 final class ParserTest extends TestCase
 {
-    /**
-     * @var  vfsStreamDirectory
-     */
-    private $root;
+    protected $rootDir;
 
     public function setUp()
     {
-        $this->root = vfsStream::setup();
+        $this->rootDir = self::getUniqueTmpDirectory();
     }
     
     public function testValidateApibString()
     {
-        $parser = new Parser('bla.apib', vfsStream::url('root'));
+        $parser = new Parser('bla.apib', $this->rootDir);
         $this->assertEquals($parser->getApib(), 'bla.apib');
     }
     
@@ -54,7 +50,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'apib-file' => 'invalid.apib',
-            '--directory' => vfsStream::url('root'),
+            '--directory' => $this->rootDir,
             '--namespace' => 'BlueprintApi'
         ]);
         $output = $commandTester->getDisplay();
@@ -70,17 +66,18 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'apib-file' => $testDirectory->getRealPath().DIRECTORY_SEPARATOR.'ApiBlueprint.apib',
-            '--directory' => vfsStream::url('root'),
-            '--namespace' => 'BlueprintApi'
+            '--directory' => $this->rootDir,
+            '--namespace' => 'BlueprintApi',
+            '--no-phar' => true
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertRegExp('/Generate vfs:\/\/.*.php/', $output);
+        $this->assertRegExp('/Generate .*.php/', $output);
 
         $expectedFinder = new Finder();
         $expectedFinder->in($testDirectory->getRealPath() . DIRECTORY_SEPARATOR . 'expected'.DIRECTORY_SEPARATOR.'src/');
 
         $generatedFinder = new Finder();
-        $generatedFinder->in(vfsStream::url('root/src'));
+        $generatedFinder->in($this->rootDir.DIRECTORY_SEPARATOR.'src');
 
         $this->assertEquals(count($expectedFinder), count($generatedFinder), 'Failute in generate files');
         
@@ -95,7 +92,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
                 $expectedPath = $expectedFile->getRealPath();
                 $path = $expectedFile->getRelativePathname();
                 $actualPath   = $generatedData[ $expectedFile->getRelativePathname() ];
-                
+
                 $this->assertEquals(
                     file_get_contents($expectedPath),
                     file_get_contents($actualPath),
@@ -118,5 +115,43 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
         }
         
         return $data;
+    }
+
+    
+    public static function getUniqueTmpDirectory()
+    {
+        $attempts = 5;
+        $root = sys_get_temp_dir();
+        
+        do {
+            $unique = $root . DIRECTORY_SEPARATOR . uniqid('blueprint-sdk-maker-test-' . rand(1000, 9000));
+            
+            if (!file_exists($unique) && mkdir($unique, 0777)) {
+                return realpath($unique);
+            }
+        } while (--$attempts);
+        
+        throw new \RuntimeException('Failed to create a unique temporary directory.');
+    }
+    
+    private function rrmdir($dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (is_dir($dir."/".$object))
+                        $this->rrmdir($dir."/".$object);
+                        else
+                            unlink($dir."/".$object);
+                }
+            }
+            rmdir($dir);
+        } 
+    }
+    
+    protected function tearDown()
+    {
+        $this->rrmdir($this->rootDir);
     }
 }
