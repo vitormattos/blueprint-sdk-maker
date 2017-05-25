@@ -20,7 +20,7 @@ class MakeCommand extends Command
                 new InputArgument('apib-file', InputArgument::REQUIRED, 'Required apib file'),
                 new InputOption('no-phar', null, InputOption::VALUE_NONE, 'Don\'t generate phar archive.'),
                 new InputOption('directory', 'd', InputArgument::OPTIONAL, 'Directory where to generate files', 'build'),
-                new InputOption('namespace', 's', InputArgument::OPTIONAL, 'Namespace prefix to use for generated files', 'BlueprintApi')
+                new InputOption('namespace', 's', InputArgument::OPTIONAL, 'Namespace prefix to use for generated files', 'BlueprintSdk')
             ])
             ->setHelp(<<<EOT
 The <info>make</info> command reads the <info>.apib</info> file from the argument of command,

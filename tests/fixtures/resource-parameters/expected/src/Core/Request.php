@@ -1,6 +1,6 @@
 <?php
 
-namespace BlueprintApi;
+namespace BlueprintSdk\Core;
 
 class Request
 {

@@ -41,6 +41,8 @@ class Parser
     private $classes = [];
     private $files = [];
     private $output_directory;
+    private $coreFolder = 'Core';
+    private $entityFolder = 'Entity';
     
     /**
      * Create a new parser instance.
@@ -56,6 +58,16 @@ class Parser
     public function getApib()
     {
         return $this->apib;
+    }
+    
+    public function getCoreFolder()
+    {
+        return $this->coreFolder;
+    }
+    
+    public function getEntityFolder()
+    {
+        return $this->entityFolder;
     }
     
     public function setNamespace($namespace)
@@ -110,13 +122,17 @@ class Parser
      * @param string $name
      * @return \PhpParser\Builder\Class_
      */
-    public function setClass(string $name)
+    public function setClass(string $name, $namespace = null)
     {
         if (!array_key_exists($name, $this->classes)) {
             $factory = $this->getBuilderFactory();
-            $this->classes[$name] = $factory->class($name);
+            $this->classes[$name]['node'] = $factory->class($name);
+            if (!$namespace) {
+                $namespace = $this->getNamespace();
+            }
+            $this->classes[$name]['namespace'] = $namespace;
         }
-        return $this->classes[$name] ;
+        return $this->classes[$name]['node'];
     }
     
     public function generate($node = null)
@@ -138,8 +154,8 @@ class Parser
                 $className = $entity['meta']['title'];
                 $className = ucwords($className);
                 $className = str_replace(' ', '', $className);
-                $class = $this->setClass($className);
-                $class->extend('Request');
+                $class = $this->setClass($className, $this->getNamespace().'\\'.$this->getEntityFolder());
+                $class->extend('\\'.$this->getNamespace().'\\'.$this->getCoreFolder().'\\Request');
                 foreach ($entity['content'] as $endpoint) {
                     $endpointName = ucwords($endpoint['meta']['title']);
                     $endpointName = lcfirst($endpointName);
@@ -232,7 +248,7 @@ class Parser
     {
         $factory = $this->getBuilderFactory();
         $Parser = $this->getParser();
-        $class = $this->setClass('Api');
+        $class = $this->setClass('Api', $this->getNamespace().'\\'.$this->getCoreFolder());
         $constructor = $factory->method('__construct')
             ->makePublic();
         foreach ($node['content'] as $endpoint) {
@@ -240,7 +256,7 @@ class Parser
                 $propertyName = ucwords($endpoint['meta']['title']);
                 $propertyName = str_replace(' ', '', $propertyName);
                 $constructor->addStmts($Parser->parse(
-                    '<?php $this->'.$propertyName.' = new '.$propertyName.'($this->host);'
+                    '<?php $this->'.$propertyName.' = new \\'.$this->getNamespace().'\\'.$this->getEntityFolder().'\\'.$propertyName.'($this->host);'
                 ));
                 $class
                     ->addStmt($factory
@@ -324,25 +340,35 @@ class Request
     }
 }
 ")[0];
-        $class = $this->setClass($tmp->name);
+        $class = $this->setClass($tmp->name, $this->getNamespace().'\\'.$this->getCoreFolder());
         $class->addStmts($tmp->stmts);
     }
 
     public function printFiles()
     {
         $factory = $this->getBuilderFactory();
-        $node = $factory->namespace($this->getNamespace());
 
         $prettyPrinter = $this->getStandard();
         $return = [];
         if ($this->classes) {
             foreach ($this->classes as $name => $class) {
-                $file = clone $node;
-                $file->addStmt($class);
+                $file = $factory->namespace($class['namespace']);
+                $file->addStmt($class['node']);
                 $this->files[$name] = $file;
 
+                $dir = str_replace(
+                    $this->getNamespace(),
+                    '',
+                    $class['namespace']
+                );
+                $dir = str_replace('\\', DIRECTORY_SEPARATOR, $dir);
+                $dir = $this->output_directory.$dir.DIRECTORY_SEPARATOR;
+                $dir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
+                if (!is_dir($dir)) {
+                    mkdir($dir);
+                }
                 file_put_contents(
-                    $return[] = $this->output_directory.$name.'.php',
+                    $return[] = $dir.$name.'.php',
                     $prettyPrinter->prettyPrintFile([$file->getNode()])."\n\n"
                 );
             }

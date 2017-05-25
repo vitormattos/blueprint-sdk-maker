@@ -1,22 +1,21 @@
 <?php
 
-namespace BlueprintApi;
+namespace BlueprintSdk\Core;
 
 class Api
 {
     /**
-     * Users
-     * @var Users
+     * FORMAT
+     * @var 1A
      */
-    public $Users;
+    protected $format = '1A';
     /**
-     * Base url to API
-     * @var string
+     * HOST
+     * @var https://api.example.com
      */
-    protected $host;
+    protected $host = 'https://api.example.com';
     public function __construct()
     {
-        $this->Users = new Users($this->host);
     }
     /**
      * Define the base URL to API

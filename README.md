@@ -47,11 +47,11 @@ blueprint-sdk-maker make <filename.apib>
 Create file called `test.php` into same directory of `api.phar` and run `test.php`
 ```php
 <?php
-use BlueprintApi\Api;
+use BlueprintSdk\Core\Api;
 
 require 'api.phar';
 $api = new Api();
-$return = $api->Entity->getYourEndpoint('BLA');
+$return = $api->Entity->getYourEndpoint('ARGUMENT-X');
 var_dump($return);
 ```
 ### From composer file

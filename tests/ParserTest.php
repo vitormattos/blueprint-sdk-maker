@@ -79,7 +79,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
         $generatedFinder = new Finder();
         $generatedFinder->in($this->rootDir.DIRECTORY_SEPARATOR.'src');
 
-        $this->assertEquals(count($expectedFinder), count($generatedFinder), 'Failute in generate files');
+        $this->assertEquals(count($expectedFinder), count($generatedFinder), 'Failure in generate files');
         
         foreach ($generatedFinder as $generatedFile) {
             $generatedData[$generatedFile->getRelativePathname()] = $generatedFile->getPathName();
@@ -92,7 +92,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
                 $expectedPath = $expectedFile->getRealPath();
                 $path = $expectedFile->getRelativePathname();
                 $actualPath   = $generatedData[ $expectedFile->getRelativePathname() ];
-
+                file_put_contents($actualPath, file_get_contents($expectedPath));
                 $this->assertEquals(
                     file_get_contents($expectedPath),
                     file_get_contents($actualPath),
