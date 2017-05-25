@@ -264,7 +264,7 @@ class Parser
                         ->setDocComment(
                             "/**
                              * $propertyName
-                             * @var $propertyName
+                            * @var \\{$this->getNamespace()}\\{$this->getEntityFolder()}\\$propertyName
                              */"));
             }
         }

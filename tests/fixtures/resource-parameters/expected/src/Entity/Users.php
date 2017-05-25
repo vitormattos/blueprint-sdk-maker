@@ -1,8 +1,8 @@
 <?php
 
-namespace BlueprintSdk\Entity;
+namespace BlueprintApi\Entity;
 
-class Users extends \BlueprintSdk\Core\Request
+class Users extends \BlueprintApi\Core\Request
 {
     /**
     * Retrieve User

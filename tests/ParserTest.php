@@ -92,7 +92,7 @@ See https://github.com/vitormattos/blueprint-sdk-maker/ for more information.\n"
                 $expectedPath = $expectedFile->getRealPath();
                 $path = $expectedFile->getRelativePathname();
                 $actualPath   = $generatedData[ $expectedFile->getRelativePathname() ];
-                file_put_contents($actualPath, file_get_contents($expectedPath));
+                //file_put_contents($expectedPath, file_get_contents($actualPath));
                 $this->assertEquals(
                     file_get_contents($expectedPath),
                     file_get_contents($actualPath),

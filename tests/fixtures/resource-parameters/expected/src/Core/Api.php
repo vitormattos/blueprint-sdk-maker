@@ -1,12 +1,12 @@
 <?php
 
-namespace BlueprintSdk\Core;
+namespace BlueprintApi\Core;
 
 class Api
 {
     /**
      * Users
-     * @var Users
+     * @var \BlueprintApi\Entity\Users
      */
     public $Users;
     /**
@@ -16,7 +16,7 @@ class Api
     protected $host;
     public function __construct()
     {
-        $this->Users = new \BlueprintSdk\Entity\Users($this->host);
+        $this->Users = new \BlueprintApi\Entity\Users($this->host);
     }
     /**
      * Define the base URL to API

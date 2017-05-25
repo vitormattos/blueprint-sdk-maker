@@ -78,6 +78,9 @@ EOT
     },
     "require" : {
         "guzzlehttp/guzzle" : "^6.2"
+    },
+    "require-dev" : {
+        "phpunit/phpunit" : "^6.1"
     }
 }
 EOT;
@@ -88,6 +91,9 @@ EOT;
         copy('LICENSE', $options['directory'].DIRECTORY_SEPARATOR.'LICENSE');
         copy('res/README.md', $options['directory'].DIRECTORY_SEPARATOR.'README.md');
         copy('res/composer.lock', $options['directory'].DIRECTORY_SEPARATOR.'composer.lock');
+        copy('res/phpunit.xml.dist', $options['directory'].DIRECTORY_SEPARATOR.'phpunit.xml.dist');
+        mkdir($options['directory'].DIRECTORY_SEPARATOR.'tests');
+        copy('res/tests/phpunit-bootstrap.php', $options['directory'].DIRECTORY_SEPARATOR.'tests'.DIRECTORY_SEPARATOR.'phpunit-bootstrap.php');
 
         if (!$options['no-phar']) {
             exec('composer install -d '.$options['directory'].' --prefer-dist --no-dev -vvv');
