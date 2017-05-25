@@ -119,13 +119,6 @@ class Parser
         return $this->classes[$name] ;
     }
     
-    public function getClass($name)
-    {
-        if (array_key_exists($name, $this->classes)) {
-            return $this->classes[$name];
-        }
-    }
-    
     public function generate($node = null)
     {
         if (!$node) {
@@ -142,7 +135,8 @@ class Parser
         $factory = $this->getBuilderFactory();
         foreach ($node['content'] as $entity) {
             if ($entity['element'] == 'category') {
-                $className = ucwords($entity['meta']['title']);
+                $className = $entity['meta']['title'];
+                $className = ucwords($className);
                 $className = str_replace(' ', '', $className);
                 $class = $this->setClass($className);
                 $class->extend('Request');
@@ -164,44 +158,60 @@ class Parser
                         $methodDescription[] = $endpoint['content'][0]['meta']['title'];
                         $methodDescription[] = '';
                     }
-                    $hasOptional = false;
                     if (isset($endpoint['content'][0]['attributes']['hrefVariables']['content'])) {
+                        $args = $endpoint['content'][0]['attributes']['hrefVariables']['content'];
+                    } elseif (isset($endpoint['attributes']['hrefVariables']['content'])) {
+                        $args = $endpoint['attributes']['hrefVariables']['content'];
+                    } else {
+                        $args = [];
+                    }
+                    foreach ($args as $arg) {
+                        $docParam = '@param';
+                        $endpointParam = $factory->param($arg['content']['key']['content']);
+                        if (isset($arg['meta']['title'])) {
+                            $endpointParam->setTypeHint($arg['meta']['title']);
+                            $docParam.= ' '.$arg['meta']['title'];
+                        }
+                        if ($arg['attributes']['typeAttributes'][0] != 'required') {
+                            $docParam.= ' (optional)';
+                            $endpointParam->setDefault(null);
+                        }
+                        if (isset($arg['meta']['description'])) {
+                            $docParam.=$arg['meta']['description'];
+                        }
+                        $method->addParam($endpointParam);
+                        $methodDescription[] = $docParam;
+                    }
+
+                    $url = $this->convertUrl($endpoint['attributes']['href']);
+                    $url = parse_url($url);
+                    $url = $url['path'];
+                    $code = [];
+                    $code[]= '$path = "'.$url.'";';
+                    if (isset($endpoint['content'][0]['attributes']['hrefVariables']['content'])) {
+                        $hasOptional = false;
                         foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
-                            $docParam = '@param';
-                            $endpointParam = $factory->param($arg['content']['key']['content']);
-                            if (isset($arg['meta']['title'])) {
-                                $endpointParam->setTypeHint($arg['meta']['title']);
-                                $docParam.= ' '.$arg['meta']['title'];
+                            $name = $arg['content']['key']['content'];
+                            if (isset($arg['meta']['title']) && $arg['meta']['title'] == 'boolean') {
+                                $code[] =
+                                    "if(\$$name == 'true' || \$$name == '1'){".
+                                    "$$name = true;".
+                                    "} else { $$name = false; }";
                             }
                             if ($arg['attributes']['typeAttributes'][0] != 'required') {
                                 $hasOptional = true;
-                                $docParam.= ' (optional)';
-                                $endpointParam->setDefault(null);
-                            }
-                            if (isset($arg['meta']['description'])) {
-                                $docParam.=$arg['meta']['description'];
-                            }
-                            $method->addParam($endpointParam);
-                            $methodDescription[] = $docParam;
-                        }
-                    }
-                    if ($hasOptional) {
-                        $url = parse_url($endpoint['attributes']['href']);
-                        $url['path'] = str_replace('{', '{$', $url['path']);
-                        $code = [];
-                        $code[]= '$path = "'.$url['path'].'";';
-                        foreach ($endpoint['content'][0]['attributes']['hrefVariables']['content'] as $arg) {
-                            if ($arg['attributes']['typeAttributes'][0] != 'required') {
-                                $name = $arg['content']['key']['content'];
-                                $code[]="if(!is_null(\$$name)) \$params['$name'] = \$$name;";
+                                $code[]=
+                                    "if(!is_null(\$$name)) {".
+                                        "\$params['$name'] = \$$name;".
+                                    "}";
                             }
                         }
-                        $code[]= '$path.= \'?\'.http_build_query($params);';
-                        $method->addStmts($Parser->parse('<?php '.implode("\n", $code)));
-                    } else {
-                        $url = str_replace('{', '{$', $endpoint['attributes']['href']);
-                        $method->addStmts($Parser->parse("<?php \$path = \"$url\";"));
+                        if ($hasOptional) {
+                            $code[]= '$path.= \'?\'.http_build_query($params);';
+                        }
                     }
+                    $method->addStmts($Parser->parse('<?php '.implode("\n", $code)));
+
                     $method->addStmts($Parser->parse('<?php return self::request($method, $path);'));
                     $methodDescription[] = '@return Array|Exception array';
                     $method->setDocComment(
@@ -344,5 +354,15 @@ class Request
             }
         }
         return $return;
+    }
+    
+    private function convertUrl($url)
+    {
+        if (preg_match('/\{\?[a-z,]+\}/', $url, $matches)) {
+            $url = str_replace('?', '', $url);
+            $url = str_replace(',', '}{', $url);
+        }
+        $url = str_replace('{', '{$', $url);
+        return $url;
     }
 }
