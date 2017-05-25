@@ -18,7 +18,7 @@ oriented object interface.
 
 ### As a Phar (Recommended)
 
-Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker).
+Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker/releases/latest).
 
 You may place it anywhere that will make it easier for you to access (such as /usr/local/bin) and chmod it to 755. You can even rename it to just box to avoid having to type the .phar extension every time.
 
