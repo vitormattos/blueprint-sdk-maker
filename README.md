@@ -9,7 +9,7 @@
 
 > [API Blueprint](https://apiblueprint.org/) is a powerful high-level API description language for web APIs. 
 
-Through that's project it's possible parse `.apib` files, get all their properties and generate all files needed to push a new SDK automatically.
+Through that's project it's possible parse `.apib` files, get all their properties and generate all files needed to push a new SDK.
 ## How do I get started?
 
 **NOTE:** 
