@@ -1,23 +1,21 @@
-[![Build
-Status](https://travis-ci.org/vitormattos/blueprint-sdk-maker.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-sdk-maker)
-[![Coverage
-Status](https://coveralls.io/repos/vitormattos/blueprint-sdk-maker/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-sdk-maker?branch=master)
-[![Latest Stable
-Version](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/v/stable)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
-[![License](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/license)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
+[![Build Status](https://travis-ci.org/vitormattos/blueprint-sdk-maker.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-sdk-maker)
+[![Coverage Status](https://coveralls.io/repos/vitormattos/blueprint-sdk-maker/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-sdk-maker?branch=master)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+[![Latest Stable Version](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/v/stable)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207-blue.svg)](https://php.net/)
+[![License](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/license)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
 
-# Parser for API blueprint files
+# API Blueprint Parser
 
-[API Blueprint](https://apiblueprint.org/) is a powerful high-level API
-description language for web APIs and generate `.apib` media files. With this
-project you will parse `.apib` files and get all propertyes of file with
-oriented object interface.
+> [API Blueprint](https://apiblueprint.org/) is a powerful high-level API description language for web APIs. 
+
+Through that's project it's possible parse `.apib` files and get all their properties.
 
 ## How do I get started?
 
-
-**NOTE:** *Blueprint SDK Maker depends on the [Drafter](https://github.com/apiaryio/drafter) library. Please see that repo for build instructions.*
+**NOTE:** 
+*Blueprint SDK Maker depends on the [Drafter](https://github.com/apiaryio/drafter) library.
+Please see that repo for build instructions.*
 
 To generate standalone phar file, set the following in your php.ini:
 
@@ -28,14 +26,16 @@ phar.readonly = Off
 
 If you don't need generate `phar`, run Blueprint SDK Maker using the option `--no-phar`.
 
-### As a Phar (Recommended)
+### As a phar (Recommended)
 
-Download the latest phar from the latest [release](https://github.com/vitormattos/blueprint-sdk-maker/releases/latest).
+Download the latest `phar` **[here](https://github.com/vitormattos/blueprint-sdk-maker/releases/latest)**.
 
-You may place it anywhere that will make it easier for you to access (such as /usr/local/bin) and chmod it to 755. You can even rename it to just box to avoid having to type the .phar extension every time.
+You should put it anywhere that facilitates its accessibility (such /usr/local/bin) and chmod should be 755.
+You can even rename it to just the box to avoid having to type the `.phar` extension every time.
 
-## Parsing the .apib file
-Run the follow command replacing `<filename.apib>` by your `.apip` file. The default output of this command is a directory called `build` containing the source of your SDK and a phar (`api.phar`) to use your SDK standalone.
+## Parsing `.apib` files
+Run the follow command replacing `<filename.apib>` by your `.apib` file.
+The default output of this command is a directory called `build` containing the source of your SDK and a phar (`api.phar`) to use your SDK standalone.
 
 ```
 blueprint-sdk-maker make <filename.apib>
