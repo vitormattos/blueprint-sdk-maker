@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/vitormattos/blueprint-sdk-maker.svg?branch=master)](https://travis-ci.org/vitormattos/blueprint-sdk-maker)
-[![Coverage Status](https://coveralls.io/repos/vitormattos/blueprint-sdk-maker/badge.svg?branch=master&service=github)](https://coveralls.io/github/vitormattos/blueprint-sdk-maker?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/vitormattos/blueprint-sdk-maker/badge.svg?branch=master)](https://coveralls.io/github/vitormattos/blueprint-sdk-maker?branch=master)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 [![Latest Stable Version](https://poser.pugx.org/vitormattos/blueprint-sdk-maker/v/stable)](https://packagist.org/packages/vitormattos/blueprint-sdk-maker)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207-blue.svg)](https://php.net/)
