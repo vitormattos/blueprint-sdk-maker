@@ -1,6 +1,6 @@
 {
 	"name" : "vitormattos/blueprint-sdk-maker",
-	"description" : "Create SDK client from API blueprint apib file",
+	"description" : "Create SDK client from API Blueprint",
 	"license" : "MIT",
 	"type" : "library",
 	"homepage" : "https://github.com/vitormattos/blueprint-sdk-maker",
