@@ -23,7 +23,7 @@ class Request
         try {
             $res = $client->request($method, $url);
         } catch (Exception $e) {
-            $res = json_decode($e->getResponse()->getBody()->getContents());
+            $res = json_decode($e->getResponse()->getBody()->getContents(), true);
         }
         return json_decode($res->getBody()->getContents(), true);
     }
