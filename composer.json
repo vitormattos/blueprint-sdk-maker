@@ -41,7 +41,7 @@
 		"phpcs" : "phpcs --standard=PSR2 -n src",
 		"phpcbf" : "phpcbf --standard=PSR2 -n src",
 		"phplint" : "phplint src",
-		"unit" : "php -d phar.readonly=0 vendor/bin/phpunit --coverage-clover ./tests/log/clover.xml",
+		"unit" : "php -d phar.readonly=0 vendor/bin/phpunit --coverage-clover ./tests/log/clover.xml --colors=always",
 		"phpstan" : "vendor/bin/phpstan analyse src --level 7",
 		"test" : [
 			"@unit",

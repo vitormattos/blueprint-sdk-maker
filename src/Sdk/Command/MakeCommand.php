@@ -19,13 +19,16 @@ class MakeCommand extends Command
             ->setDefinition([
                 new InputArgument('apib-file', InputArgument::REQUIRED, 'Required apib file'),
                 new InputOption('no-phar', null, InputOption::VALUE_NONE, 'Don\'t generate phar archive.'),
-                new InputOption('format', null, InputArgument::OPTIONAL,
+                new InputOption(
+                    'format',
+                    null,
+                    InputArgument::OPTIONAL,
                     "The output format returned by endpoints\n".
                     "<info>raw</info>: return raw output from all endpoints\n".
                     "<info>json-array</info>: Expect json response and convert to array\n".
                     "<info>json-object</info>: Expect json response and convert to object)\n",
                     'json-array'
-                    ),
+                ),
                 new InputOption('directory', 'd', InputArgument::OPTIONAL, 'Directory where to generate files', 'build'),
                 new InputOption('namespace', 's', InputArgument::OPTIONAL, 'Namespace prefix to use for generated files', 'BlueprintSdk'),
                 new InputOption('drafter-bin', null, InputArgument::OPTIONAL, 'Binary of Drafter', 'drafter')
@@ -57,7 +60,7 @@ EOT
                 "<error>The drafter command is mandatory</error>\n".
                 "Install drafter or specify the binary. Access https://github.com/apiaryio/drafter to read\n".
                 "about install drafter or inform the location of drafter binary by <info>--drafter-bin</info> argument</error>"
-                );
+            );
             return 1;
         }
 
@@ -100,12 +103,14 @@ EOT;
         file_put_contents(
             $paths[] = $options['directory'].DIRECTORY_SEPARATOR.'composer.json',
             $composerJson
-            );
+        );
         copy('LICENSE', $options['directory'].DIRECTORY_SEPARATOR.'LICENSE');
         copy('res/README.md', $options['directory'].DIRECTORY_SEPARATOR.'README.md');
         copy('res/composer.lock', $options['directory'].DIRECTORY_SEPARATOR.'composer.lock');
         copy('res/phpunit.xml.dist', $options['directory'].DIRECTORY_SEPARATOR.'phpunit.xml.dist');
-        mkdir($options['directory'].DIRECTORY_SEPARATOR.'tests');
+        if (!is_dir($options['directory'].DIRECTORY_SEPARATOR.'tests')) {
+            mkdir($options['directory'].DIRECTORY_SEPARATOR.'tests');
+        }
         copy('res/tests/phpunit-bootstrap.php', $options['directory'].DIRECTORY_SEPARATOR.'tests'.DIRECTORY_SEPARATOR.'phpunit-bootstrap.php');
 
         if (!$options['no-phar']) {

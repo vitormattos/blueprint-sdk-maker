@@ -69,14 +69,14 @@ final class MakeCommandTest extends TestCase
         $generatedFinder->in($this->rootDir.DIRECTORY_SEPARATOR.'src');
 
         $this->assertEquals(count($expectedFinder), count($generatedFinder), 'Failure in generate files');
-        
+
         foreach ($generatedFinder as $generatedFile) {
             $generatedData[$generatedFile->getRelativePathname()] = $generatedFile->getPathName();
         }
-        
+
         foreach ($expectedFinder as $expectedFile) {
             $this->assertArrayHasKey($expectedFile->getRelativePathname(), $generatedData);
-            
+
             if ($expectedFile->isFile()) {
                 $expectedPath = $expectedFile->getRealPath();
                 $path = $expectedFile->getRelativePathname();
@@ -86,7 +86,7 @@ final class MakeCommandTest extends TestCase
                     $expectedPath,
                     $actualPath,
                     "Expected " . $expectedPath . " got " . $actualPath
-                    );
+                );
             }
         }
     }
