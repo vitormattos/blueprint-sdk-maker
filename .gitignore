@@ -14,6 +14,7 @@ vendor
 
 # this is user specific settings for running phpunit to override the defaults in phpunit.xml.dist
 phpunit.xml
+.phpunit.result.cache
 
 # Don't commit composer.phar, or the .phar our build tool generates
 *.phar
